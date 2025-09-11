@@ -13,7 +13,7 @@ const LoginScreen = ({ navigation }) => {
       await signIn(userData);
       navigation.replace("Main"); 
     } else {
-      alert('Invalid credentials');
+      alert('Username or email invalid');
     }
   };
 
@@ -51,8 +51,9 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    fontSize: 24,
-    color: 'limegreen',
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#61764B',
     marginBottom: 20,
   },
   input: {

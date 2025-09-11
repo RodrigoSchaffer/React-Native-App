@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { useUser } from '../UserContext';
 
 const SignInScreen = ({ navigation }) => {
@@ -14,7 +14,7 @@ const SignInScreen = ({ navigation }) => {
       await signIn(userData);
       navigation.replace("Main");
     } else {
-      alert('Please fill all fields');
+      alert('All fields needs to be filled');
     }
   };
 
