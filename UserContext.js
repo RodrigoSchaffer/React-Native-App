@@ -1,24 +1,31 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { onAuthStateChanged, signOut as firebaseSignOut } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 
 const UserContext = createContext();
 
-export const useUser = () => {
-  return useContext(UserContext);
-};
+export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const signIn = (userData) => {
-    setUser(userData);
-  };
+  
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
 
-  const signOut = () => {
-    setUser(null);
+  
+  const signOut = async () => {
+    await firebaseSignOut(auth);
   };
 
   return (
-    <UserContext.Provider value={{ user, signIn, signOut }}>
+    <UserContext.Provider value={{ user, loading, signOut }}>
       {children}
     </UserContext.Provider>
   );

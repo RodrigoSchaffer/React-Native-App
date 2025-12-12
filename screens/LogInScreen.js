@@ -3,42 +3,54 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as Network from "expo-network";
-import { useUser } from "../UserContext";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
 
 const LoginScreen = ({ navigation }) => {
-  const { signIn } = useUser();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
+
     const networkState = await Network.getNetworkStateAsync();
     if (!networkState.isConnected) {
-      alert('No internet connection!');
+      Alert.alert("No Internet", "Please check your connection.");
       return;
     }
-    if (email === "abc@gmail.com" && password === "123") {
-      const userData = { name: "Abc", email };
-      await signIn(userData);
+
+    if (!email || !password) {
+      Alert.alert("Error", "Email and password are required.");
+      return;
+    }
+
+    try {
+
+      await signInWithEmailAndPassword(auth, email, password);
+
       navigation.replace("Main");
-    } else {
-      alert("Username or email invalid");
+
+    } catch (error) {
+      Alert.alert("Login Failed", error.message);
     }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Log In</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
+
       <TextInput
         style={styles.input}
         placeholder="Password"
@@ -46,13 +58,13 @@ const LoginScreen = ({ navigation }) => {
         value={password}
         onChangeText={setPassword}
       />
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.button}
           onPress={handleLogin}
-          color="#61764B"
         >
-          <Text style={styles.buttonText}> Login </Text>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -94,7 +106,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 8,
-    marginBottom: 20, // Space between the buttons
+    marginBottom: 20,
     width: "100%",
     alignItems: "center",
   },
